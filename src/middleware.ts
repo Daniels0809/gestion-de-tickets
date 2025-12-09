@@ -10,43 +10,43 @@ export async function middleware(req: NextRequest) {
 
   const { pathname } = req.nextUrl;
 
-  // Rutas públicas
+  // Public routes that don't require authentication
   const publicRoutes = ["/login", "/register", "/verify", "/"];
   const isPublic = publicRoutes.some((route) => pathname.startsWith(route));
 
-  // Rutas protegidas generales
+  // Protected routes that require authentication (any role)
   const protectedRoutes = [
-    "/agent-dashboard",
-    "/client-dashboard",
+    "/agentDashboard",
+    "/clientDashboard",
     "/tickets",
   ];
 
-  // Rutas solo para agentes
+  // Routes that only agents can access
   const agentOnlyRoutes = [
-    "/agent-dashboard",
+    "/agentDashboard",
     "/tickets/manage",
     "/tickets/admin",
   ];
 
-  // Si ya está logueado y viene a login:
+  // If user is already logged in and tries to access login page, redirect to appropriate dashboard
   if (pathname === "/login" && token) {
     if (token.role === "agent") {
-      return NextResponse.redirect(new URL("/agent-dashboard", req.url));
+      return NextResponse.redirect(new URL("/agentDashboard", req.url));
     }
-    return NextResponse.redirect(new URL("/client-dashboard", req.url));
+    return NextResponse.redirect(new URL("/clientDashboard", req.url));
   }
 
-  // Si intenta entrar a una ruta protegida SIN token:
+  // If trying to access a protected route without token, redirect to login
   if (protectedRoutes.some((route) => pathname.startsWith(route))) {
     if (!token) {
       return NextResponse.redirect(new URL("/login", req.url));
     }
   }
 
-  // Si intenta entrar a una ruta SOLO PARA AGENTES:
+  // If trying to access an agent-only route without agent role, redirect to client dashboard
   if (agentOnlyRoutes.some((route) => pathname.startsWith(route))) {
     if (!token || token.role !== "agent") {
-      return NextResponse.redirect(new URL("/client-dashboard", req.url));
+      return NextResponse.redirect(new URL("/clientDashboard", req.url));
     }
   }
 
@@ -56,8 +56,8 @@ export async function middleware(req: NextRequest) {
 export const config = {
   matcher: [
     "/login",
-    "/agent-dashboard/:path*",
-    "/client-dashboard/:path*",
+    "/agentDashboard/:path*",
+    "/clientDashboard/:path*",
     "/tickets/:path*",
   ],
 };

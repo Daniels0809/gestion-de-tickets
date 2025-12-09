@@ -2,6 +2,7 @@
 
 import TicketCard from "@/src/components/TicketCard";
 import { TicketModal } from "@/src/components/TicketModal";
+import Button from "@/src/components/Button";
 import { createComment, getCommentsByTicket } from "@/src/services/comment";
 import { createTicket, getTickets } from "@/src/services/tikets";
 import { useSession } from "next-auth/react";
@@ -21,6 +22,7 @@ interface TicketState {
   createdAt?: string;
 }
 
+
 const ClientDashboard = () => {
   const { data: session } = useSession();
   const [tickets, setTickets] = useState<TicketState[]>([]);
@@ -28,12 +30,15 @@ const ClientDashboard = () => {
   const [modalMode, setModalMode] = useState<"create" | "comment">("create");
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+
   const fetchTickets = async () => {
     if (!session) return;
 
+    // Filter tickets to show only those created by the current user
     const filters = { createdBy: session.user?._id };
     const data = await getTickets(filters);
 
+    // Load comments for each ticket
     const ticketsWithComments = await Promise.all(
       data.map(async (ticket) => ({
         ...ticket,
@@ -45,15 +50,17 @@ const ClientDashboard = () => {
     setTickets(ticketsWithComments);
   };
 
- useEffect(() => {
-  if (!session) return;
+  // Load tickets when session is available
+  useEffect(() => {
+    if (!session) return;
 
-  const loadTickets = async () => {
-    await fetchTickets();
-  };
+    const loadTickets = async () => {
+      await fetchTickets();
+    };
 
-  loadTickets();
-}, [session]);
+    loadTickets();
+  }, [session]);
+
   const openCreateModal = () => {
     setModalMode("create");
     setSelectedTicket({
@@ -67,18 +74,22 @@ const ClientDashboard = () => {
     setIsModalOpen(true);
   };
 
+
   const openCommentModal = (ticket: TicketState) => {
     setModalMode("comment");
     setSelectedTicket({ ...ticket, description: "" });
     setIsModalOpen(true);
   };
 
+
   const handleSubmit = async () => {
     if (!selectedTicket) return;
 
     if (modalMode === "create") {
+      // Create new ticket
       await createTicket(selectedTicket);
     } else if (modalMode === "comment" && selectedTicket._id) {
+      // Add comment to existing ticket
       await createComment({
         ticketId: selectedTicket._id,
         author: session?.user?.name || "Unknown",
@@ -87,21 +98,24 @@ const ClientDashboard = () => {
     }
 
     setIsModalOpen(false);
+    // Refresh tickets list after creating/commenting
     fetchTickets();
   };
 
   return (
     <div className="p-6">
-      {/* Botón para crear ticket */}
+      {/* Button to create new ticket */}
       <div className="mb-6">
-        <button
+        <Button
           onClick={openCreateModal}
-          className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
+          variant="primary"
+          size="md"
         >
-          Crear Ticket
-        </button>
+          Create Ticket
+        </Button>
       </div>
 
+      {/* Grid of ticket cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {tickets.map((ticket) => (
           <TicketCard
@@ -118,6 +132,7 @@ const ClientDashboard = () => {
         ))}
       </div>
 
+      {/* Modal for creating tickets or adding comments */}
       {selectedTicket && (
         <TicketModal
           isOpen={isModalOpen}

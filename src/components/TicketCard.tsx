@@ -1,5 +1,6 @@
 import React from "react";
-// import { t } from "i18next";
+import Button from "./Button";
+import Badge from "./Badge";
 
 interface Props {
   title: string;
@@ -26,38 +27,55 @@ export const TicketCard: React.FC<Props> = ({
   onDelete,
   isAgent = false,
 }) => {
-  
-
   return (
     <div className="group relative bg-gradient-to-br from-[#050509] via-[#0c0f18] to-[#07070d] rounded-3xl border border-violet-500/10 shadow-lg p-6 hover:-translate-y-1 transition-all duration-300">
-      <h3 className="text-xl font-bold text-white">{title}</h3>
-      <p className="text-gray-300/90 text-sm mb-2">{description}</p>
-      <div className="flex justify-between text-sm mb-2">
-        <span className="text-white">Status: {status}</span>
-        <span className="text-white">Priority: {priority}</span>
+      <h3 className="text-xl font-bold text-white mb-2">{title}</h3>
+      <p className="text-gray-300/90 text-sm mb-3 line-clamp-2">{description}</p>
+      
+      {/* Status and Priority Badges */}
+      <div className="flex gap-2 mb-3 flex-wrap">
+        {status && (
+          <Badge variant="status" value={status}>
+            {status.charAt(0).toUpperCase() + status.slice(1).replace("_", " ")}
+          </Badge>
+        )}
+        <Badge variant="priority" value={priority}>
+          {priority.charAt(0).toUpperCase() + priority.slice(1)}
+        </Badge>
       </div>
-      {assignedTo && <p className="text-gray-400 text-sm mb-2">Assigned to: {assignedTo}</p>}
-      {createdAt && <p className="text-gray-500 text-xs mb-2">{("Created at")}: {createdAt.split("T")[0]}</p>}
 
-      <div className="flex gap-2 mt-3">
+      {assignedTo && (
+        <p className="text-gray-400 text-sm mb-2">Assigned to: {assignedTo}</p>
+      )}
+      {createdAt && (
+        <p className="text-gray-500 text-xs mb-3">Created: {createdAt.split("T")[0]}</p>
+      )}
+
+      {/* Action Buttons */}
+      <div className="flex gap-2 mt-4">
         {onComment && (
-          <button
+          <Button
             onClick={onComment}
-            className="flex-1 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm font-medium transition"
+            variant="primary"
+            size="sm"
+            fullWidth
           >
-            {("Comment")}
-          </button>
+            Comment
+          </Button>
         )}
         {isAgent && onEdit && (
-          <button
+          <Button
             onClick={onEdit}
-            className="flex-1 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md text-sm font-medium transition"
+            variant="secondary"
+            size="sm"
+            fullWidth
           >
-            {("Edit")}
-          </button>
+            Edit
+          </Button>
         )}
       </div>
     </div>
   );
 };
+
 export default TicketCard;

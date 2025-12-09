@@ -1,10 +1,11 @@
 import mongoose from "mongoose";
 
 const dbConnection = async () => {
-
   try {
-    console.log(process.env.MONGODB_URI);
+    // Get MongoDB connection string from environment variables
     const mongodbAtlas = process.env.MONGODB_URI || ""; 
+    
+    // Connect to MongoDB
     await mongoose.connect(mongodbAtlas);
 
     console.log('DB Online');

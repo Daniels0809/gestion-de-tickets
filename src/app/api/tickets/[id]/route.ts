@@ -3,27 +3,27 @@ import Ticket from "@/src/database/models/Ticket";
 import dbConnection from "@/src/lib/dbconection";
 import mongoose from "mongoose";
 
+
 export async function PUT(req: NextRequest, context: { params: Promise<{ id: string }> }) {
   await dbConnection();
   const body = await req.json();
-const {id} = await context.params;
-  // ... (Verificación de ROL/Sesión aquí) ...
+  const {id} = await context.params;
+  
   
   try {
-    // 1. Encontrar el documento
+    // Find the ticket by ID
     const ticket = await Ticket.findById(new mongoose.Types.ObjectId(id));
 
     if (!ticket) {
         return NextResponse.json({ message: "Ticket no encontrado" }, { status: 404 });
     }
 
-    // 2. Aplicar los cambios del body de forma segura
-    Object.assign(ticket, body); // Copia las propiedades del body al objeto ticket
+    // Apply changes from request body to ticket object
+    Object.assign(ticket, body);
 
-    // 3. Guardar (ejecuta validaciones y middleware 'pre save')
+    // Save ticket (runs validations and pre-save middleware)
     const updatedTicket = await ticket.save(); 
     
-    // [INTEGRACIÓN] Disparar correo, etc.
 
     return NextResponse.json(updatedTicket);
   } catch (err: any) {

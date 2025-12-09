@@ -28,12 +28,23 @@ const AgentDashboard = () => {
   const [modalMode, setModalMode] = useState<"edit" | "comment">("edit");
   const [isModalOpen, setIsModalOpen] = useState(false);
 
- const fetchTickets = async () => {
+  // Filter states
+  const [statusFilter, setStatusFilter] = useState("");
+  const [priorityFilter, setPriorityFilter] = useState("");
+  const [search, setSearch] = useState("");
+
+  const fetchTickets = async () => {
     if (!session) return;
 
-    const filters = { };
+    // Build filters object
+    const filters: any = {};
+    if (statusFilter) filters.status = statusFilter;
+    if (priorityFilter) filters.priority = priorityFilter;
+    if (search) filters.search = search;
+
     const data = await getTickets(filters);
 
+    // Load comments for each ticket
     const ticketsWithComments = await Promise.all(
       data.map(async (ticket) => ({
         ...ticket,
@@ -44,15 +55,14 @@ const AgentDashboard = () => {
 
     setTickets(ticketsWithComments);
   };
-useEffect(() => {
-  if (!session) return;
 
-  const loadTickets = async () => {
-    await fetchTickets();
-  };
+  // Load tickets when session or filters change
+  useEffect(() => {
+    if (!session) return;
+    fetchTickets();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session, statusFilter, priorityFilter, search]);
 
-  loadTickets();
-}, [session]);
   const openEditModal = (ticket: TicketState) => {
     setModalMode("edit");
     setSelectedTicket({
@@ -63,6 +73,9 @@ useEffect(() => {
     setIsModalOpen(true);
   };
 
+  /**
+   * Opens modal to add a comment to a ticket
+   */
   const openCommentModal = (ticket: TicketState) => {
     setModalMode("comment");
     setSelectedTicket({ ...ticket, description: "" });
@@ -88,6 +101,51 @@ useEffect(() => {
 
   return (
     <div className="p-6">
+      {/* Filters */}
+      <div className="flex flex-col sm:flex-row gap-4 mb-6">
+        <input
+          type="text"
+          placeholder="Search tickets..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="flex-1 px-4 py-2 border rounded-md"
+        />
+        <select
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value)}
+          className="px-4 py-2 border rounded-md"
+        >
+          <option value="">All Status</option>
+          <option value="open">Open</option>
+          <option value="in_progress">In Progress</option>
+          <option value="resolved">Resolved</option>
+          <option value="closed">Closed</option>
+        </select>
+        <select
+          value={priorityFilter}
+          onChange={(e) => setPriorityFilter(e.target.value)}
+          className="px-4 py-2 border rounded-md"
+        >
+          <option value="">All Priorities</option>
+          <option value="low">Low</option>
+          <option value="medium">Medium</option>
+          <option value="high">High</option>
+        </select>
+        {(statusFilter || priorityFilter || search) && (
+          <button
+            onClick={() => {
+              setStatusFilter("");
+              setPriorityFilter("");
+              setSearch("");
+            }}
+            className="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-md"
+          >
+            Clear
+          </button>
+        )}
+      </div>
+
+      {/* Tickets Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {tickets.map((ticket) => (
           <TicketCard
@@ -105,6 +163,7 @@ useEffect(() => {
         ))}
       </div>
 
+      {/* Modal for editing tickets or adding comments */}
       {selectedTicket && (
         <TicketModal
           isOpen={isModalOpen}

@@ -14,10 +14,17 @@ export interface TicketProps {
   updatedAt?: string;
 }
 
-export const getTickets = async (filters?: { createdBy?: string; assignedTo?: string; status?: string }) => {
+export const getTickets = async (filters?: { 
+  createdBy?: string; 
+  assignedTo?: string; 
+  status?: string; 
+  priority?: string;
+  search?: string;
+}) => {
   const res = await axios.get("/api/tickets", { params: filters });
   return res.data as TicketProps[];
 };
+
 
 export const createTicket = async (ticket: TicketProps) => {
   const res = await axios.post("/api/tickets", ticket);
@@ -25,7 +32,7 @@ export const createTicket = async (ticket: TicketProps) => {
 };
 
 export const updateTicket = async (_id: string, ticket: Partial<TicketProps>) => {
-  const res = await axios.put(`/api/tickets/${_id}`, ticket); // Llama a /api/tickets/ID
+  const res = await axios.put(`/api/tickets/${_id}`, ticket);
   return res.data;
 };
 

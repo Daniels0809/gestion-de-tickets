@@ -1,226 +1,233 @@
 # HelpDeskPro
 
-**HelpDeskPro** es una aplicación web interna para la gestión de **tickets de soporte técnico** de clientes internos y externos. Su objetivo es reemplazar correos, chats y hojas de cálculo, centralizando los tickets, usuarios y comentarios en un sistema moderno y tipado con **Next.js + TypeScript**, usando **App Router**, **MongoDB** y **Axios**.
+**HelpDeskPro** is an internal web application for managing **technical support tickets** for internal and external clients. Its goal is to replace emails, chats, and spreadsheets by centralizing tickets, users, and comments in a modern, typed system using **Next.js + TypeScript**, **App Router**, **MongoDB**, and **Axios**.
 
 ---
 
-## 🏢 Caso de uso
+## 🏢 Use Case
 
-Actualmente, HelpDeskPro gestionaba los requerimientos de soporte mediante correos, chats y hojas de cálculo, lo que generaba problemas como:
+Previously, HelpDeskPro managed support requests through emails, chats, and spreadsheets, which caused problems such as:
 
-- No hay un registro centralizado de los tickets.  
-- Correos se pierden o se responden tarde, afectando la experiencia del cliente.  
-- No hay seguimiento claro del estado de cada ticket (abierto, en progreso, resuelto, cerrado).  
-- Los agentes no tienen prioridad ni recordatorios sobre tickets sin respuesta.  
-- La gerencia no puede medir tiempos de respuesta ni estados globales del soporte.  
+- No centralized ticket registry.
+- Emails get lost or answered late, affecting customer experience.
+- No clear tracking of each ticket's status (open, in progress, resolved, closed).
+- Agents don't have priority or reminders for unanswered tickets.
+- Management cannot measure response times or global support status.
 
-La solución fue construir esta **aplicación web interna** que digitaliza y optimiza la gestión de tickets, usuarios, respuestas, notificaciones y recordatorios automáticos.
-
----
-
-## 🎯 Objetivos del proyecto
-
-- Centralizar tickets, usuarios y comentarios en un único sistema.  
-- Facilitar la gestión de tickets: creación, actualización, asignación de agente y cierre.  
-- Separar vistas y permisos entre clientes y agentes.  
-- Enviar notificaciones por correo en eventos clave (creación, respuesta, cierre).  
-- Automatizar recordatorios para tickets sin respuesta mediante **cron jobs**.  
-- Aplicar tipado fuerte, componentización reutilizable y buenas prácticas de desarrollo.
+The solution was to build this **internal web application** that digitizes and optimizes ticket management, users, responses, notifications, and automatic reminders.
 
 ---
 
-## 🛠 Tecnologías utilizadas
+## 🎯 Project Objectives
 
-- **Next.js (App Router) + TypeScript**  
-- **React Hooks y Context API** (gestión de estado global y autenticación)  
-- **MongoDB con Mongoose** (modelos: User, Ticket, Comment)  
-- **Axios** para consumo de API  
-- **NodeMailer** o librería de envío de correos  
-- **CSS/SCSS o Tailwind CSS** para UI responsiva  
-- **Cron jobs** para recordatorios automáticos  
+- Centralize tickets, users, and comments in a single system.
+- Facilitate ticket management: creation, update, agent assignment, and closure.
+- Separate views and permissions between clients and agents.
+- Send email notifications on key events (creation, response, closure).
+- Automate reminders for unanswered tickets through **cron jobs**.
+- Apply strong typing, reusable componentization, and development best practices.
 
 ---
 
-## ⚙ Funcionalidades principales
+## 🛠 Technologies Used
 
-### 1. Gestión de Tickets
+- **Next.js (App Router) + TypeScript**
+- **React Hooks and Context API** (global state management and authentication)
+- **MongoDB with Mongoose** (models: User, Ticket, Comment)
+- **Axios** for API consumption
+- **NodeMailer** for email sending
+- **Tailwind CSS** for responsive UI
+- **Cron jobs** for automatic reminders
 
-- Crear nuevos tickets desde el panel del cliente.  
-- Editar y actualizar información relevante desde el panel del agente:
-  - Estado (`open`, `in_progress`, `resolved`, `closed`)  
-  - Prioridad (`low`, `medium`, `high`)  
-  - Agente asignado  
-- Cerrar tickets cambiando el estado a `closed`.  
-- Listar tickets:
-  - Cliente: solo sus propios tickets.  
-  - Agente: todos los tickets con filtros por estado y prioridad.  
-- Formularios tipados en TypeScript.
+---
 
-### 2. Gestión de Usuarios y Autenticación
+## ⚙ Main Features
 
-- Login con validación de credenciales.  
-- Roles: `client` y `agent`.  
-- Redirección según rol:
-  - `client` → Panel de usuario.  
-  - `agent` → Dashboard de agente.  
-- Protección de rutas según rol usando **App Router** y middleware.  
-- Estado de sesión centralizado con Context API.
+### 1. Ticket Management
 
-### 3. Comentarios y Respuestas
+- Create new tickets from the client panel.
+- Edit and update relevant information from the agent panel:
+  - Status (`open`, `in_progress`, `resolved`, `closed`)
+  - Priority (`low`, `medium`, `high`)
+  - Assigned agent
+- Close tickets by changing status to `closed`.
+- List tickets:
+  - Client: only their own tickets.
+  - Agent: all tickets with filters by status and priority.
+- Typed forms in TypeScript.
 
-- Cada ticket tiene un hilo de comentarios con:
-  - `ticketId`, `author`, `message`, `createdAt`  
-- Cliente puede agregar comentarios adicionales.  
-- Agente puede responder tickets.  
-- Comentarios mostrados en orden cronológico en detalle de ticket.
+### 2. User Management and Authentication
 
-### 4. UI Reutilizable
+- Login with credential validation.
+- Roles: `client` and `agent`.
+- Role-based redirection:
+  - `client` → User panel.
+  - `agent` → Agent dashboard.
+- Route protection by role using **App Router** and middleware.
+- Centralized session state with Context API.
 
-- Componentes tipados y reutilizables:
-  - **Button** (variantes y tamaños)  
-  - **Badge** (estado y prioridad)  
-  - **Card** (resumen de ticket)  
-- Cards muestran: título, estado, prioridad, fecha de creación y acciones (ver detalle, cambiar estado).  
+### 3. Comments and Responses
 
-### 5. API y Servicios
+- Each ticket has a comment thread with:
+  - `ticketId`, `author`, `message`, `createdAt`
+- Client can add additional comments.
+- Agent can respond to tickets.
+- Comments displayed in chronological order in ticket detail.
 
-- Modelos Mongoose: **User**, **Ticket**, **Comment**.  
-- Endpoints en Next.js App Router:
-  - `/api/tickets` → GET, POST, PUT/PATCH, DELETE  
-  - `/api/comments` → GET por ticket, POST  
-  - `/api/auth/login` → POST  
-- Servicios Axios para consumo en front:
+### 4. Reusable UI
+
+- Typed and reusable components:
+  - **Button** (variants and sizes)
+  - **Badge** (status and priority)
+  - **Card** (ticket summary)
+- Cards display: title, status, priority, creation date, and actions (view detail, change status).
+
+### 5. API and Services
+
+- Mongoose models: **User**, **Ticket**, **Comment**.
+- Endpoints in Next.js App Router:
+  - `/api/tickets` → GET, POST, PUT/PATCH, DELETE
+  - `/api/comments` → GET by ticket, POST
+  - `/api/auth/login` → POST
+- Axios services for frontend consumption:
   - `getTickets`, `createTicket`, `updateTicket`, `getCommentsByTicket`, `createComment`
 
-### 6. Notificaciones por Correo
+### 6. Email Notifications
 
-- Al crear un ticket → correo al cliente.  
-- Al agregar comentario/respuesta → correo al cliente.  
-- Al cerrar un ticket → correo al cliente.  
-- Lógica centralizada en un helper o servicio de correo reutilizable.
+- When creating a ticket → email to client.
+- When adding comment/response → email to client.
+- When closing a ticket → email to client.
+- Logic centralized in a reusable email helper or service.
 
-### 7. Manejo de Errores y Validaciones
+### 7. Error Handling and Validations
 
-- Captura de errores en try/catch en API y servicios.  
-- Mensajes claros al usuario:
-  - Ej.: “Ticket creado correctamente”, “No se pudo actualizar el ticket”.  
-- Validaciones de campos obligatorios (`title`, `description`).  
-- Acciones protegidas según rol: solo agentes pueden cerrar tickets o cambiar estado a `resolved`.  
+- Error capture with try/catch in API and services.
+- Clear messages to users:
+  - E.g., "Ticket created successfully", "Could not update ticket".
+- Validation of required fields (`title`, `description`).
+- Role-protected actions: only agents can close tickets or change status to `resolved`.
 
 ---
 
-## ✅ Criterios de aceptación
+## ✅ Acceptance Criteria
 
 1. **Tickets**:
-   - Crear, editar, cerrar, listar y filtrar correctamente.  
-2. **Usuarios y roles**:
-   - Login funcional y redirección correcta.  
-   - Rutas protegidas según rol.  
-3. **Comentarios**:
-   - Hilos visibles y ordenados cronológicamente.  
-   - Permisos respetados según rol.  
+   - Create, edit, close, list, and filter correctly.
+2. **Users and roles**:
+   - Functional login and correct redirection.
+   - Routes protected by role.
+3. **Comments**:
+   - Visible threads ordered chronologically.
+   - Permissions respected by role.
 4. **UI**:
-   - Cards con Badge y Button.  
-   - Props tipadas y componentes reutilizables.  
-5. **API y Dashboard**:
-   - Endpoints funcionales.  
-   - Dashboard permite listar, crear, responder y actualizar tickets.  
-6. **Notificaciones por correo**:
-   - Envío automático en eventos clave.  
-7. **Errores y validaciones**:
-   - Mensajes claros.  
-   - Roles y campos obligatorios respetados.  
+   - Cards with Badge and Button.
+   - Typed props and reusable components.
+5. **API and Dashboard**:
+   - Functional endpoints.
+   - Dashboard allows listing, creating, responding, and updating tickets.
+6. **Email notifications**:
+   - Automatic sending on key events.
+7. **Errors and validations**:
+   - Clear messages.
+   - Roles and required fields respected.
 
 ---
 
-## 📂 Estructura de proyecto (App Router)
+## 📂 Project Structure (App Router)
 
+```
 /app
-/dashboard # Panel de agente
-page.tsx
-ticket/[id]/page.tsx
-/tickets # Panel de cliente
-page.tsx
-/auth
-login/page.tsx
-register/page.tsx
-/api
-/tickets
-route.ts
-/comments
-route.ts
-/auth
-login/route.ts
+  /agentDashboard
+    page.tsx
+  /clientDashboard
+    page.tsx
+  /login
+    page.tsx
+  /register
+    page.tsx
+  /api
+    /tickets
+      route.ts
+      [id]/route.ts
+    /comments
+      route.ts
+    /auth
+      [...nextauth]/route.ts
+      /login/route.ts
+      /register/route.ts
 /components
-Button.tsx
-Badge.tsx
-Card.tsx
-/context
-AuthContext.tsx
+  Button.tsx
+  Badge.tsx
+  Card.tsx
+  TicketCard.tsx
+  TicketModal.tsx
+  Navbar.tsx
+/database/models
+  User.ts
+  Ticket.ts
+  Comment.ts
 /lib
-db.ts # Conexión a MongoDB
-mail.ts # Servicio de correos
+  dbconection.ts
+  sendMail.ts
 /services
-ticketService.ts
-commentService.ts
+  tikets.ts
+  comment.ts
+  login.ts
+  register.ts
 /types
-User.ts
-Ticket.ts
-Comment.ts
-
-yaml
-Copiar código
+  index.ts
+```
 
 ---
 
-## 🚀 Instalación y ejecución
+## 🚀 Installation and Execution
 
-1. Clonar el repositorio:
+1. Clone the repository:
 
 ```bash
-git clone <URL_DEL_REPOSITORIO>
-cd helpdeskpro
-Instalar dependencias:
+git clone <REPOSITORY_URL>
+cd gestion-de-tickets
+```
 
-bash
-Copiar código
+2. Install dependencies:
+
+```bash
 npm install
-Configurar variables de entorno en .env:
+```
 
-ini
-Copiar código
-MONGODB_URI=<>
-EMAIL_USER=<correo_remitente>
-EMAIL_PASS=<contraseña_correo>
-Ejecutar proyecto en modo desarrollo:
+3. Configure environment variables in `.env`:
+4. Run the project in development mode:
 
-bash
-Copiar código
+```bash
 npm run dev
-Acceder a la aplicación:
+```
+
+5. Access the application:
+
+```
 http://localhost:3000
+```
 
-👤 Datos del Coder
-Nombre: Daniel Ospina
+---
 
-Clan: Be a Codernnn
+## 👤 Coder Information
 
-Correo: correo@example.com
+**Name:** Daniel Ospina
 
-Documento de identidad: <Número de documento>
+**Clan:** Be a Codernnn
 
-📦 Entregables
-Enlace al repositorio GitHub (público).
+**Email:** correo@example.com
 
-Proyecto comprimido (.zip).
+**ID Document:** <ID Number>
 
-README con instrucciones claras y datos del coder.
+---
 
-Capturas o GIFs del flujo principal:
+## 📦 Deliverables
 
-Creación de ticket (cliente).
-
-Gestión de ticket (agente).
-
-Vista de comentarios.
-
+1. Link to public GitHub repository.
+2. Compressed project (.zip).
+3. README with clear instructions and coder information.
+4. Screenshots or GIFs of the main flow:
+   - Ticket creation (client).
+   - Ticket management (agent).
+   - Comments view.
