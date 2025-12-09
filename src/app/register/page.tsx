@@ -23,7 +23,7 @@ export const RegisterPage = () => {
         email,
         cedula,
         password,
-        role: "client",
+        role: role as "client" | "agent",
       });
 
       setMessage({ text: "Registro exitoso, ya puedes iniciar sesión", type: "success" });

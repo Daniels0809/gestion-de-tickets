@@ -4,9 +4,9 @@ import React from "react";
 interface Props {
   title: string;
   description: string;
-  status: number;
-  priority: string;
-  assignedTo: string;
+  status?: "open" | "in_progress" | "resolved" | "closed";
+  priority: "low" | "medium" | "high";
+  assignedTo: string | undefined;
   createdAt?: string;
   onEdit?: () => void;
   onComment?: () => void;

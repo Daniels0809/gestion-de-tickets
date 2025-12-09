@@ -27,8 +27,8 @@ export default function LoginPage() {
       setError(result.error);
     } else {
       const session = await getSession();
-      if (session?.user.role === "agent") router.push("/agent-dashboard");
-      else router.push("/client-dashboard");
+      if (session?.user.role === "agent") router.push("/agentDashboard");
+      else router.push("/clientDashboard");
     }
   };
 

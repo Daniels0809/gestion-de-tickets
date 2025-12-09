@@ -7,10 +7,12 @@ export async function GET(req: NextRequest) {
 
   const { searchParams } = new URL(req.url);
   const createdBy = searchParams.get("createdBy");
+  const assignedTo = searchParams.get("assignedTo");
   const status = searchParams.get("status");
 
   const filters: any = {};
   if (createdBy) filters.createdBy = createdBy;
+  if (assignedTo) filters.assignedTo = assignedTo;
   if (status) filters.status = status;
 
   try {
