@@ -1,16 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import Ticket from "@/src/database/models/Ticket";
 import dbConnection from "@/src/lib/dbconection";
+import mongoose from "mongoose";
 
-export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(req: NextRequest, context: { params: Promise<{ id: string }> }) {
   await dbConnection();
   const body = await req.json();
-
+const {id} = await context.params;
   // ... (Verificación de ROL/Sesión aquí) ...
   
   try {
     // 1. Encontrar el documento
-    const ticket = await Ticket.findById(params.id);
+    const ticket = await Ticket.findById(new mongoose.Types.ObjectId(id));
 
     if (!ticket) {
         return NextResponse.json({ message: "Ticket no encontrado" }, { status: 404 });

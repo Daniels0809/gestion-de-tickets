@@ -31,7 +31,7 @@ const AgentDashboard = () => {
  const fetchTickets = async () => {
     if (!session) return;
 
-    const filters = { status: "open" };
+    const filters = { };
     const data = await getTickets(filters);
 
     const ticketsWithComments = await Promise.all(
