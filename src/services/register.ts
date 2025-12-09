@@ -7,6 +7,12 @@ export const registerService = async (data: {
   password: string;
   role: "client" | "agent";
 }) => {
-  const res = await axios.post("/api/auth/register", data);
-  return res.data;
+  try {
+    const res = await axios.post("/api/auth/register", data);
+    return res.data;
+  } catch (error: any) {
+    throw new Error(
+      error.response?.data?.error || "Error al registrar usuario"
+    );
+  }
 };

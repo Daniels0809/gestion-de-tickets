@@ -28,9 +28,9 @@ const handler = NextAuth({
         const userFound = await User.findOne({
           email: credentials.email,
         }).select("+password");
-        if (!userFound.verified) {
-          throw new Error("Debes verificar tu correo antes de iniciar sesión");
-        }
+        // if (!userFound.verified) {
+        //   throw new Error("Debes verificar tu correo antes de iniciar sesión");
+        // }
 
         if (!userFound) {
           throw new Error("Credenciales inválidas");

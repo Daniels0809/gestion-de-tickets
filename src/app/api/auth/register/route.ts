@@ -15,9 +15,9 @@ const userSchema = yup.object().shape({
 export async function POST(req: Request) {
   try {
     await dbConnection();
+    console.log("DB conectada");
 
     const body = await req.json();
-
     const validData = await userSchema.validate(body, { abortEarly: false });
 
     const { name, email, cedula, password, role } = validData;
@@ -39,33 +39,42 @@ export async function POST(req: Request) {
       role,
     });
 
-    try {
-      await sendEmail({
-        to: email,
-        subject: "Registro exitoso - Sistema de Tickets",
-        html: `
-          <div style="font-family: Arial; padding: 20px;">
-            <h2>¡Hola ${name}!</h2>
-            <p>Tu cuenta se creó exitosamente en el sistema de tickets.</p>
+    // let emailSent = false;
 
-            <p><strong>Email:</strong> ${email}</p>
-            <p><strong>Cédula:</strong> ${cedula}</p>
-            <p><strong>Rol asignado:</strong> ${role}</p>
+    // try {
+    //   await sendEmail({
+    //     to: email,
+    //     subject: "Registro exitoso - Sistema de Tickets",
+    //     html: `
+    //       <div style="font-family: Arial; padding: 20px;">
+    //         <h2>¡Hola ${name}!</h2>
+    //         <p>Tu cuenta se creó exitosamente en el sistema de tickets.</p>
 
-            <br />
-            <p>Ya puedes iniciar sesión.</p>
-            <p style="color:#999;">(No respondas este correo)</p>
-          </div>
-        `,
-      });
-    } catch (emailError) {
-      console.error("Error enviando correo:", emailError);
-    }
+    //         <p><strong>Email:</strong> ${email}</p>
+    //         <p><strong>Cédula:</strong> ${cedula}</p>
+    //         <p><strong>Rol asignado:</strong> ${role}</p>
+
+    //         <br />
+    //         <p>Ya puedes iniciar sesión.</p>
+    //         <p style="color:#999;">(No respondas este correo)</p>
+    //       </div>
+    //     `,
+    //   });
+
+    //   emailSent = true;
+
+    // } catch (emailError) {
+    //   console.error("⚠️ Error enviando correo:", emailError);
+    // }
 
     return NextResponse.json(
-      { message: "Usuario resgistrado y correo enviado", userId: newUser._id },
+      {
+    message: "Usuario registrado (correo desactivado temporalmente)",
+    userId: newUser._id,
+  },
       { status: 201 }
     );
+
   } catch (error: any) {
     console.error("Error en el registro:", error);
 
